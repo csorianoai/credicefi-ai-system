@@ -7,7 +7,7 @@ app = FastAPI(title="CredICEfi AI API", version="1.0.0")
 @app.get("/", response_class=HTMLResponse)
 @app.head("/")
 def dashboard():
-    html_content = """<!DOCTYPE html>
+    html_content = r"""<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -36,7 +36,6 @@ def dashboard():
         <h1>🚀 CredICEfi Multi-Tenant Dashboard</h1>
         <p>Sistema de Evaluación Crediticia con IA</p>
     </div>
-    
     <div class="container">
         <div class="card">
             <h3>📊 Estado del Sistema</h3>
@@ -57,36 +56,28 @@ def dashboard():
                 <span class="metric-value">89ms</span>
             </div>
         </div>
-        
         <div class="card">
             <h3>💳 Evaluación de Crédito</h3>
-            
             <div class="form-group">
                 <label>Edad:</label>
                 <input type="number" id="age" value="30" min="18" max="80">
             </div>
-            
             <div class="form-group">
                 <label>Ingresos Mensuales (COP):</label>
                 <input type="number" id="income" value="3500000">
             </div>
-            
             <div class="form-group">
                 <label>Score Crediticio:</label>
                 <input type="number" id="creditScore" value="650" min="300" max="850">
             </div>
-            
             <div class="form-group">
                 <label>Monto Solicitado (COP):</label>
                 <input type="number" id="loanAmount" value="10000000">
             </div>
-            
             <button class="btn" onclick="evaluateCredit()">🧠 Evaluar Riesgo</button>
-            
             <div id="result"></div>
         </div>
     </div>
-    
     <script>
         function evaluateCredit() {
             const age = document.getElementById('age').value;

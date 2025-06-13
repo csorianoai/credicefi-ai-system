@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CredICEfi - Dashboard Multi-Tenant</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            color: #2563eb;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🚀 CredICEfi Multi-Tenant Dashboard</h1>
+        <p>Sistema de Evaluación Crediticia con IA</p>
+    </div>
+    
+    <div class="container">
+        <div class="card">
+            <h3>📊 Estado del Sistema</h3>
+            <p>API Status: <span id="status">Verificando...</span></p>
+            <button class="btn" onclick="testAPI()">🧪 Probar Conexión</button>
+        </div>
+        
+        <div class="card">
+            <h3>💳 Evaluación Rápida</h3>
+            <p>Edad: <input type="number" id="age" value="30" style="padding:5px;"></p>
+            <p>Ingresos: <input type="number" id="income" value="3500000" style="padding:5px;"></p>
+            <button class="btn" onclick="quickEval()">🚀 Evaluar</button>
+            <div id="result" style="margin-top:1rem;"></div>
+        </div>
+    </div>
+    
+    <script>
+        async function testAPI() {
+            try {
+                const response = await fetch('http://localhost:8000/health');
+                const data = await response.json();
+                document.getElementById('status').textContent = '✅ Conectado';
+            } catch (error) {
+                document.getElementById('status').textContent = '❌ Error: ' + error.message;
+            }
+        }
+        
+        async function quickEval() {
+            const age = document.getElementById('age').value;
+            const income = document.getElementById('income').value;
+            
+            try {
+                const response = await fetch('http://localhost:8000/assess-credit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Tenant-ID': 'banco_demo'
+                    },
+                    body: JSON.stringify({
+                        applicant: {
+                            age: parseInt(age),
+                            monthly_income: parseInt(income),
+                            credit_score: 650,
+                            city: "Bogotá"
+                        },
+                        loan_amount: 10000000,
+                        loan_term_months: 36,
+                        loan_purpose: "vehiculo"
+                    })
+                });
+                
+                const data = await response.json();
+                document.getElementById('result').innerHTML = `
+                    <h4>Resultado: ${data.risk_assessment.decision}</h4>
+                    <p>Similitud: ${data.similarity_score.toFixed(1)}%</p>
+                    <p>Riesgo: ${data.risk_assessment.risk_level}</p>
+                `;
+            } catch (error) {
+                document.getElementById('result').innerHTML = '❌ Error: ' + error.message;
+            }
+        }
+        
+        // Test automático al cargar
+        setTimeout(testAPI, 1000);
+    </script>
+</body>
+</html>

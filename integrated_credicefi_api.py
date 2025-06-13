@@ -1,23 +1,8 @@
-﻿from fastapi import FastAPI, HTTPException, Header, Depends, BackgroundTasks
+﻿from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
-from typing import Optional, List, Dict, Any
-import json
-import os
-import math
-import logging
 from datetime import datetime
-import uuid
-from pathlib import Path
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-app = FastAPI(
-    title="CredICEfi Multi-Tenant AI API",
-    version="3.0.0",
-    description="🚀 Sistema de Evaluación Crediticia con IA Multi-Institucional"
-)
+app = FastAPI(title="CredICEfi AI API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -27,31 +12,29 @@ app.add_middleware(
 )
 
 @app.get("/")
-async def root():
+def read_root():
     return {
-        "message": "🚀 CredICEfi Multi-Tenant AI API v3.0 - Deployment Version!",
-        "status": "✅ OPERATIONAL",
+        "message": "🚀 CredICEfi Multi-Tenant AI API - FUNCIONANDO!",
+        "status": "✅ OPERATIONAL", 
         "timestamp": datetime.now().isoformat(),
-        "features": [
-            "✅ FastAPI Backend",
-            "✅ Multi-Tenant Architecture",
-            "✅ Credit Risk Assessment",
-            "✅ Deployment Ready"
-        ]
+        "version": "1.0.0-deployment"
     }
 
 @app.get("/health")
-async def health_check():
+def health_check():
     return {
         "status": "healthy",
         "timestamp": datetime.now().isoformat(),
-        "version": "3.0.0-deployment",
-        "components": {
-            "api": "✅ Active",
-            "system": "✅ Ready"
-        }
+        "api": "✅ Active",
+        "system": "✅ Ready"
     }
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("integrated_credicefi_api:app", host="0.0.0.0", port=8000, reload=True)
+@app.get("/demo")
+def demo_evaluation():
+    return {
+        "applicant": "Demo User",
+        "risk_level": "LOW", 
+        "decision": "APPROVE",
+        "similarity": 25.5,
+        "message": "🎉 CredICEfi funcionando en internet!"
+    }
